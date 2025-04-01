@@ -14,7 +14,6 @@ import { nextCookies } from "better-auth/next-js";
 
 export const authConfig = {
   appName: "kapil-jewels",
-  baseURL: env.URL,
   advanced: {
     generateId: false,
   },

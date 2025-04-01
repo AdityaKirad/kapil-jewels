@@ -16,7 +16,10 @@ export const env = createEnv({
       .enum(["development", "test", "production"])
       .default("development"),
     RESEND_API_KEY: z.string(),
-    URL: z.string().url(),
+    BETTER_AUTH_URL: z.preprocess(
+      (str) => process.env.VERCEL_URL ?? str,
+      process.env.VERCEL ? z.string() : z.string().url(),
+    ),
   },
 
   /**
@@ -37,7 +40,7 @@ export const env = createEnv({
     POSTGRES_URL: process.env.POSTGRES_URL,
     NODE_ENV: process.env.NODE_ENV,
     RESEND_API_KEY: process.env.RESEND_API_KEY,
-    URL: process.env.URL,
+    BETTER_AUTH_URL: process.env.BETTER_AUTH_URL,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
