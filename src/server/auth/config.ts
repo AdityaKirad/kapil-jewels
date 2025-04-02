@@ -1,4 +1,5 @@
-import { env } from "~/env";
+import { ResetPasswordMail } from "~/app/_components/mails/reset-password";
+import { VerifyMail } from "~/app/_components/mails/verify";
 import { db } from "~/server/db";
 import {
   account,
@@ -7,10 +8,11 @@ import {
   user,
   verification,
 } from "~/server/db/schema";
-import { api } from "~/trpc/server";
 import { type BetterAuthOptions } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { nextCookies } from "better-auth/next-js";
+import { customSession } from "better-auth/plugins";
+import { sendEmail } from "../email";
 
 export const authConfig = {
   appName: "kapil-jewels",
@@ -31,7 +33,11 @@ export const authConfig = {
     expiresIn: 60 * 10,
     sendOnSignUp: true,
     async sendVerificationEmail({ url, user: { email } }) {
-      await api.resend.verify({ email, url });
+      await sendEmail({
+        to: email,
+        subject: "Verify your email",
+        react: VerifyMail({ url }),
+      });
     },
   },
   emailAndPassword: {
@@ -39,8 +45,12 @@ export const authConfig = {
     autoSignIn: false,
     requireEmailVerification: true,
     resetPasswordTokenExpiresIn: 60 * 10,
-    async sendResetPassword(data) {
-      await api.resend.resetPassword({ email: data.user.email, url: data.url });
+    async sendResetPassword({ url, user: { email } }) {
+      await sendEmail({
+        to: email,
+        subject: "Reset your password",
+        react: ResetPasswordMail({ url }),
+      });
     },
   },
   rateLimit: {
@@ -63,5 +73,15 @@ export const authConfig = {
       maxAge: 60 * 10,
     },
   },
-  plugins: [nextCookies()],
+  plugins: [
+    customSession(async ({ session, user }) => ({
+      expires: session.expiresAt,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+      },
+    })),
+    nextCookies(),
+  ],
 } satisfies BetterAuthOptions;

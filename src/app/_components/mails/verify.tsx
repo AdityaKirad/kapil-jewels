@@ -1,5 +1,5 @@
 import { Link } from "@react-email/components";
-import { MailLayout } from "./layout";
+import { MailLayout } from "./mail-layout";
 
 export function VerifyMail({ url }: Readonly<{ url: string }>) {
   return (
