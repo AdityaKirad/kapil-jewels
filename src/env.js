@@ -7,10 +7,18 @@ export const env = createEnv({
    * isn't built with invalid env vars.
    */
   server: {
-    ADMIN_URL: z.string().url(),
+    ADMIN_SESSION_KEY: z.string(),
+    DATABASE_URL: z.string().url(),
+    HMAC_SECRET: z.string(),
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
+    SESSION_SECRET: z.string(),
+    RESEND_API_KEY: z.string(),
+    URL: z.preprocess(
+      (val) => process.env.VERCEL_URL ?? val,
+      process.env.VERCEL ? z.string() : z.string().url(),
+    ),
   },
 
   /**
@@ -27,8 +35,13 @@ export const env = createEnv({
    * middlewares) or client-side so we need to destruct manually.
    */
   runtimeEnv: {
-    ADMIN_URL: process.env.ADMIN_URL,
+    ADMIN_SESSION_KEY: process.env.ADMIN_SESSION_KEY,
+    DATABASE_URL: process.env.DATABASE_URL,
+    HMAC_SECRET: process.env.HMAC_SECRET,
     NODE_ENV: process.env.NODE_ENV,
+    SESSION_SECRET: process.env.SESSION_SECRET,
+    RESEND_API_KEY: process.env.RESEND_API_KEY,
+    URL: process.env.URL,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
