@@ -1,6 +1,5 @@
 import { Button } from "~/components/ui/button";
 import { env } from "~/env";
-import { SESSION_KEY } from "~/server/auth";
 import Form from "next/form";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -16,7 +15,7 @@ export default async function Page() {
         action={async () => {
           "use server";
 
-          (await cookies()).delete(SESSION_KEY);
+          (await cookies()).delete(env.ADMIN_SESSION_KEY);
 
           redirect("/login");
         }}

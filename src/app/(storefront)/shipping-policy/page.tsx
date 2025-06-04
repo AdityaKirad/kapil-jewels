@@ -1,9 +1,4 @@
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableRow,
-} from "../../_components/ui/table";
+import { Table, TableBody, TableCell, TableRow } from "~/components/ui/table";
 
 export default function Page() {
   return (
